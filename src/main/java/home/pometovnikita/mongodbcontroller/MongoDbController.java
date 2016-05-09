@@ -47,6 +47,22 @@ public class MongoDbController {
         return this;
     }
 
+    public MongoDbController deleteAllInvalid () {
+        for (Document document : mongoCollection.find()) {
+            if (validateProxy(document)) {
+                mongoCollection.deleteOne(document);
+            }
+        }
+
+        return this;
+    }
+
+    private boolean validateProxy (Document document) {
+        String ip = document.getString("ip");
+        int port = document.getInteger("port");
+        return ProxyValidator.validate(ip, port);
+    }
+
     public MongoDbController deleteAll () {
         mongoCollection.drop();
         return this;
@@ -62,12 +78,6 @@ public class MongoDbController {
             }
         }
         return null;
-    }
-
-    private boolean validateProxy (Document document) {
-        String ip = document.getString("ip");
-        int port = document.getInteger("port");
-        return ProxyValidator.validate(ip, port);
     }
 
     public FoxtoolsProxyResult getAllAsFoxtoolsProxyResult () {

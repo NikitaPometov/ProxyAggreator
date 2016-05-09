@@ -29,14 +29,24 @@ public class MainRestController {
     @RequestMapping(value = "/getList", produces = "application/json")
     public List<FoxtoolsProxyResultItem> getProxiesList () {
         try {
-            updateProxyDatabase();
+            fillUpProxyDatabase();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return mongoDbController.getAllAsArrayList();
     }
 
-    private void updateProxyDatabase () throws IOException {
+    @RequestMapping(value = "/refreshList")
+    public void refreshProxyList () {
+        mongoDbController.deleteAllInvalid();
+        try {
+            fillUpProxyDatabase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fillUpProxyDatabase () throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> results = new ArrayList<>();
 
