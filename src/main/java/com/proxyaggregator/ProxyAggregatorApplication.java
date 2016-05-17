@@ -1,4 +1,4 @@
-package home.pometovnikita;
+package com.proxyaggregator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

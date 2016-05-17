@@ -1,4 +1,4 @@
-package home.pometovnikita;
+package com.proxyaggregator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

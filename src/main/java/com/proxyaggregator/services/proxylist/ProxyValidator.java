@@ -1,4 +1,4 @@
-package home.pometovnikita.proxylistcontroller;
+package com.proxyaggregator.services.proxylist;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

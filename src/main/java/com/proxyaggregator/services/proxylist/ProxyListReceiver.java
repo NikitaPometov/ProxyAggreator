@@ -1,9 +1,9 @@
-package home.pometovnikita.proxylistcontroller;
+package com.proxyaggregator.services.proxylist;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import home.pometovnikita.foxtoolsresult.FoxtoolsProxyResult;
-import home.pometovnikita.foxtoolsresult.FoxtoolsProxyResultItem;
+import com.proxyaggregator.serialisable.foxtoolsresult.FoxtoolsProxyResult;
+import com.proxyaggregator.serialisable.foxtoolsresult.FoxtoolsProxyResultItem;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;

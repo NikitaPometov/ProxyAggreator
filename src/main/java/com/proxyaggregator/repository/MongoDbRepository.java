@@ -1,4 +1,4 @@
-package home.pometovnikita.mongodbcontroller;
+package com.proxyaggregator.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,26 +7,26 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import home.pometovnikita.foxtoolsresult.FoxtoolsProxyResult;
-import home.pometovnikita.foxtoolsresult.FoxtoolsProxyResultItem;
-import home.pometovnikita.proxylistcontroller.ProxyValidator;
+import com.proxyaggregator.serialisable.foxtoolsresult.FoxtoolsProxyResult;
+import com.proxyaggregator.serialisable.foxtoolsresult.FoxtoolsProxyResultItem;
+import com.proxyaggregator.services.proxylist.ProxyValidator;
 import org.bson.Document;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-@Component
-public class MongoDbController {
+@Repository
+public class MongoDbRepository {
     final static String MONGO_DB_NAME = "proxyserversdb";
     final MongoClient mongoClient;
     final MongoDatabase mongoDatabase;
     MongoCollection<Document> mongoCollection;
     String PROXY_SERVERS_COLLECTION_NAME;
 
-    private MongoDbController () {
+    private MongoDbRepository () {
         this.PROXY_SERVERS_COLLECTION_NAME = "proxyServers";
         this.mongoClient = new MongoClient();
         this.mongoDatabase = mongoClient.getDatabase(MONGO_DB_NAME);
@@ -34,12 +34,12 @@ public class MongoDbController {
             PROXY_SERVERS_COLLECTION_NAME);
     }
 
-    public MongoDbController insertList (List<String> items) {
+    public MongoDbRepository insertList (List<String> items) {
         items.forEach(this::insert);
         return this;
     }
 
-    public MongoDbController insert (String item) {
+    public MongoDbRepository insert (String item) {
         Document document = Document.parse(item);
         if (null == mongoCollection.find(document).first()) {
             mongoCollection.insertOne(document);
@@ -47,7 +47,7 @@ public class MongoDbController {
         return this;
     }
 
-    public MongoDbController deleteAllInvalid () {
+    public MongoDbRepository deleteAllInvalid () {
         for (Document document : mongoCollection.find()) {
             if (validateProxy(document)) {
                 mongoCollection.deleteOne(document);
@@ -63,7 +63,7 @@ public class MongoDbController {
         return ProxyValidator.validate(ip, port);
     }
 
-    public MongoDbController deleteAll () {
+    public MongoDbRepository deleteAll () {
         mongoCollection.drop();
         return this;
     }

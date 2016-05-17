@@ -1,10 +1,10 @@
-package home.pometovnikita;
+package com.proxyaggregator.serialisable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProxyRequestBean {
+public class ProxyRequest {
     @JsonProperty(value = "country") private String country;
 
     @JsonProperty(value = "method") private String method;

@@ -1,10 +1,13 @@
-package home.pometovnikita;
+package com.proxyaggregator.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import home.pometovnikita.foxtoolsresult.FoxtoolsProxyResultItem;
-import home.pometovnikita.mongodbcontroller.MongoDbController;
-import home.pometovnikita.proxylistcontroller.ProxyListReceiver;
+import com.proxyaggregator.ProxyClient;
+import com.proxyaggregator.serialisable.ProxyRequest;
+import com.proxyaggregator.serialisable.Response;
+import com.proxyaggregator.serialisable.foxtoolsresult.FoxtoolsProxyResultItem;
+import com.proxyaggregator.services.proxylist.ProxyListReceiver;
+import com.proxyaggregator.repository.MongoDbRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +20,13 @@ import java.util.List;
 
 @RestController
 public class MainRestController {
-    @Autowired MongoDbController mongoDbController;
+    @Autowired MongoDbRepository mongoDbRepository;
     @Autowired ProxyListReceiver proxyListReceiver;
     @Autowired ProxyClient proxyClient;
 
     @RequestMapping(value = "/deleteAll")
     public void clearDatabase () {
-        mongoDbController.deleteAll();
+        mongoDbRepository.deleteAll();
     }
 
     @RequestMapping(value = "/getList", produces = "application/json")
@@ -33,12 +36,12 @@ public class MainRestController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return mongoDbController.getAllAsArrayList();
+        return mongoDbRepository.getAllAsArrayList();
     }
 
     @RequestMapping(value = "/refreshList")
     public void refreshProxyList () {
-        mongoDbController.deleteAllInvalid();
+        mongoDbRepository.deleteAllInvalid();
         try {
             fillUpProxyDatabase();
         } catch (IOException e) {
@@ -57,13 +60,13 @@ public class MainRestController {
                 System.out.println(e.getLocation() + e.getMessage());
             }
         });
-        mongoDbController.insertList(results);
+        mongoDbRepository.insertList(results);
     }
 
     @RequestMapping(value = "/", consumes = { MediaType.APPLICATION_JSON_VALUE,
         MediaType.TEXT_PLAIN_VALUE })
-    public ResponseBean sendAndReceiveThroughProxy (
-        @RequestBody ProxyRequestBean body) {
+    public Response sendAndReceiveThroughProxy (
+        @RequestBody ProxyRequest body) {
 
         try {
             return proxyClient.sendRequest(body);

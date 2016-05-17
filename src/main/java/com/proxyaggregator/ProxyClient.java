@@ -1,6 +1,8 @@
-package home.pometovnikita;
+package com.proxyaggregator;
 
-import home.pometovnikita.mongodbcontroller.MongoDbController;
+import com.proxyaggregator.repository.MongoDbRepository;
+import com.proxyaggregator.serialisable.ProxyRequest;
+import com.proxyaggregator.serialisable.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -17,9 +19,9 @@ import java.net.URISyntaxException;
 @Component
 public class ProxyClient {
 
-    @Autowired MongoDbController mongoDbController;
+    @Autowired MongoDbRepository mongoDbRepository;
 
-    public ResponseBean sendRequest (ProxyRequestBean proxyRequest)
+    public Response sendRequest (ProxyRequest proxyRequest)
         throws IOException {
 
         JSONObject jsonObject = new JSONObject(proxyRequest);
@@ -54,7 +56,7 @@ public class ProxyClient {
             new SimpleClientHttpRequestFactory();
 
         JSONObject json = new JSONObject(
-            mongoDbController.findOneByCountry(country));
+            mongoDbRepository.findOneByCountry(country));
 
         Proxy proxy = new Proxy(Proxy.Type.HTTP,
             new InetSocketAddress(json.getString("ip"), json.getInt("port")));
@@ -90,9 +92,9 @@ public class ProxyClient {
         }
     }
 
-    private ResponseBean parseResponse (ResponseEntity<String> responseEntity) {
+    private Response parseResponse (ResponseEntity<String> responseEntity) {
         int httpStatus = responseEntity.getStatusCode().value();
-        return new ResponseBean("", httpStatus, responseEntity.getBody());
+        return new Response("", httpStatus, responseEntity.getBody());
     }
 
     private MediaType getType (JSONObject jsonObject) throws IOException {
